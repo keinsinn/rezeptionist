@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link href="css/classless.css" rel="stylesheet">
+    <link href="css/themes.css" rel="stylesheet">
+  </head>
+  <body>
+    <h1>Hallo Welt!</h1>
+    <p>Dies ist ein Text</p>
+    <button data-on:click="@get('/liste.html')">
+      Zeig mir die Liste!
+    </button>
+    <div id="liste"></div>
+    <script>
+      window.onload = function() {
+        document.documentElement.setAttribute('data-theme', "dark")
+      };
+    </script>
+    <script type="module" src="js/datastar.js"></script>
+  </body>
+</html>
