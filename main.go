@@ -1,17 +1,42 @@
 package main
 
 import (
-	"fmt"
-	"html"
-	"log"
+	"embed"
+	"html/template"
 	"net/http"
+	"path/filepath"
 )
 
-func main() {
-	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
-	})
-	http.Handle("/", http.FileServer(http.Dir("./static")))
+//go:embed static/*
+var staticFolder embed.FS
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+//go:embed templates/*
+var templateFolder embed.FS
+
+type pageData struct {
+	PageTitle string
+}
+
+func LayoutedTemplate(path string) (tmpl *template.Template) {
+	tmpl = template.Must(template.ParseFS(templateFolder, filepath.Join("templates", "layout.html"), path))
+	return tmpl
+}
+
+func indexHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		tmpl := LayoutedTemplate(filepath.Join("templates", "main.html"))
+		data := pageData{
+			PageTitle: "Ganz viele Rezepte",
+		}
+		tmpl.Execute(w, data)
+	}
+}
+
+func main() {
+	router := http.NewServeMux()
+	router.Handle("/", indexHandler())
+
+	staticServer := http.FileServer(http.FS(staticFolder))
+	router.Handle("/static/", staticServer)
+	http.ListenAndServe(":3000", router)
 }

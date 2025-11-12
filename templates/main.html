@@ -1,0 +1,8 @@
+{{define "content"}}
+<h1>{{.PageTitle}}</h1>
+<p>Dies ist ein Text</p>
+<button data-on:click="@get('/static/liste.html')">
+Zeig mir die Liste!
+</button>
+<div id="liste"></div>
+{{end}}
